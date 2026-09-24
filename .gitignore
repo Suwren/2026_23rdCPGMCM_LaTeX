@@ -1,0 +1,27 @@
+# LaTeX 辅助文件
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.lol
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bcf
+*.run.xml
+*.nav
+*.snm
+*.xdv
+
+# 编译输出目录
+tmp/
+
+# 编辑器与系统
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
