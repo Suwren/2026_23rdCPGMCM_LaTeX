@@ -1,0 +1,118 @@
+% Standalone, editable vector figure derived from Figure 4-1.
+% Compile with: xelatex -interaction=nonstopmode p1_multiphysics_wheel.tex
+\documentclass[tikz,border=2mm]{standalone}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setmainfont{Times New Roman}
+\setCJKmainfont{Microsoft YaHei}
+\usetikzlibrary{arrows.meta,calc}
+
+\definecolor{electric}{HTML}{4F83C6}
+\definecolor{reaction}{HTML}{D88724}
+\definecolor{gas}{HTML}{5DB5C9}
+\definecolor{water}{HTML}{527FB5}
+\definecolor{thermal}{HTML}{D76C57}
+\definecolor{voltage}{HTML}{92AA49}
+\definecolor{ink}{HTML}{273544}
+\definecolor{muted}{HTML}{5D6B77}
+
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \path[use as bounding box] (-8.7,-4.75) rectangle (8.7,4.75);
+
+  % Six distinct model layers. The small gaps keep the reference image's
+  % clean segmented-ring visual language.
+  \foreach \mid/\col in {120/electric,60/reaction,0/gas,-60/water,-120/thermal,180/voltage}{
+    \pgfmathsetmacro{\aa}{\mid-27}
+    \pgfmathsetmacro{\bb}{\mid+27}
+    \fill[\col] (\aa:1.93)
+      arc[start angle=\aa,end angle=\bb,radius=1.93]
+      -- (\bb:3.18)
+      arc[start angle=\bb,end angle=\aa,radius=3.18] -- cycle;
+    \fill[white] (\mid:2.56) circle[radius=0.43];
+    \draw[muted!70,line width=0.65pt,
+      {Stealth[length=2.6pt]}-{Stealth[length=2.6pt]}]
+      (\mid:1.49) -- (\mid:1.88);
+  }
+
+  % Central shared one-dimensional PEM-cell domain.
+  \fill[white] (0,0) circle[radius=1.46];
+  \draw[ink!18,line width=0.55pt] (0,0) circle[radius=1.46];
+  \node[font=\fontsize{12}{14}\selectfont\bfseries,text=ink] at (0,0.82)
+    {PEM 单电池};
+  \node[font=\fontsize{7.8}{10}\selectfont,text=muted] at (0,0.48)
+    {一维厚度方向 $x$};
+
+  \fill[ink!55] (-1.27,-0.22) rectangle (-0.76,0.25);
+  \fill[reaction!85] (-0.75,-0.22) rectangle (-0.36,0.25);
+  \fill[electric!60] (-0.35,-0.22) rectangle (0.35,0.25);
+  \fill[reaction!85] (0.36,-0.22) rectangle (0.75,0.25);
+  \fill[ink!55] (0.76,-0.22) rectangle (1.27,0.25);
+  \foreach \xx/\lab in {-1.01/aGDL,-0.555/aCL,0/PEM,0.555/cCL,1.01/cGDL}{
+    \node[font=\fontsize{5.5}{6.5}\selectfont,text=ink] at (\xx,-0.42) {\lab};
+  }
+  \node[font=\fontsize{8.2}{10}\selectfont\bfseries,text=ink] at (0,-0.83)
+    {共享状态场 · 双向耦合};
+
+  % Icons are drawn as vectors, avoiding font-dependent emoji/symbols.
+  \begin{scope}[shift={(120:2.56)},draw=electric,line width=1.35pt,line cap=round,line join=round]
+    \draw (-0.26,0.12) -- (-0.04,0.12) -- (0.05,0.28) -- (0.12,-0.22)
+      -- (0.21,-0.07) -- (0.31,-0.07);
+  \end{scope}
+  \begin{scope}[shift={(60:2.56)},draw=reaction,line width=1.2pt,line cap=round]
+    \draw (-0.29,0.04) circle[radius=0.09];
+    \draw (-0.12,0.04) circle[radius=0.09];
+    \draw[->] (0.02,0.04) -- (0.22,0.04);
+    \draw (0.26,0.04) circle[radius=0.09];
+    \draw (-0.21,-0.22) -- (0.23,-0.22);
+  \end{scope}
+  \begin{scope}[shift={(0:2.56)},draw=gas,line width=1.2pt,line cap=round]
+    \draw (-0.25,0.17) circle[radius=0.075];
+    \draw (-0.25,-0.12) circle[radius=0.075];
+    \draw (0.04,0.03) circle[radius=0.075];
+    \draw[->] (0.12,0.03) -- (0.31,0.03);
+  \end{scope}
+  \begin{scope}[shift={(-60:2.56)},draw=water,line width=1.1pt,line cap=round]
+    \draw (0,0.29) .. controls (-0.12,0.08) and (-0.19,-0.07) .. (-0.19,-0.17)
+      arc[start angle=180,end angle=360,radius=0.19]
+      .. controls (0.19,-0.07) and (0.12,0.08) .. (0,0.29);
+    \draw (0.25,0.06) -- (0.25,-0.24);
+    \draw (0.12,-0.09) -- (0.38,-0.09);
+    \draw (0.15,0.01) -- (0.35,-0.19);
+    \draw (0.35,0.01) -- (0.15,-0.19);
+  \end{scope}
+  \begin{scope}[shift={(-120:2.56)},draw=thermal,line width=1.2pt,line cap=round]
+    \foreach \xx in {-0.19,0,0.19}{
+      \draw (\xx,-0.25) .. controls (\xx-0.13,-0.08) and (\xx+0.13,0.03) .. (\xx,0.24);
+    }
+  \end{scope}
+  \begin{scope}[shift={(180:2.56)},draw=voltage,line width=1.2pt,line cap=round]
+    \draw (-0.28,-0.2) rectangle (0.25,0.2);
+    \draw (0.25,-0.09) -- (0.33,-0.09) -- (0.33,0.09) -- (0.25,0.09);
+    \draw (-0.18,0) -- (-0.04,0);
+    \draw (0.07,0) -- (0.2,0);
+    \draw (0.135,-0.07) -- (0.135,0.07);
+  \end{scope}
+
+  % Short external labels echo Figure 4-1's outputs, with Latin variables
+  % set in Times New Roman by the document font setting.
+  \node[align=center,text=electric] at (-3.24,3.61)
+    {\fontsize{10}{12}\selectfont\bfseries 电流传输\\[-1pt]
+     \fontsize{8}{10}\selectfont $i_{\mathrm{s}},\;i_{\mathrm{m}}$};
+  \node[align=center,text=reaction] at (3.24,3.61)
+    {\fontsize{10}{12}\selectfont\bfseries 电化学反应\\[-1pt]
+     \fontsize{8}{10}\selectfont HOR / ORR};
+  \node[align=left,text=gas,anchor=west] at (3.64,0)
+    {\fontsize{10}{12}\selectfont\bfseries 气体传输\\[-1pt]
+     \fontsize{8}{10}\selectfont $N_{\mathrm{H_2}},\;N_{\mathrm{O_2}}$};
+  \node[align=center,text=water] at (3.34,-3.64)
+    {\fontsize{10}{12}\selectfont\bfseries 水 · 气 · 冰分布\\[-1pt]
+     \fontsize{8}{10}\selectfont $\varepsilon_{\mathrm{g}},\;m_{\mathrm{w}},\;m_{\mathrm{i}}$};
+  \node[align=center,text=thermal] at (-3.34,-3.64)
+    {\fontsize{10}{12}\selectfont\bfseries 能量与热传递\\[-1pt]
+     \fontsize{8}{10}\selectfont $T$};
+  \node[align=right,text=voltage,anchor=east] at (-3.64,0)
+    {\fontsize{10}{12}\selectfont\bfseries 电压输出\\[-1pt]
+     \fontsize{8}{10}\selectfont $V_{\mathrm{cell}}$};
+\end{tikzpicture}
+\end{document}

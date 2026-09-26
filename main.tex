@@ -277,11 +277,11 @@
 \end{equation}
 其中温度与总水定义在全部 $63$ 个网格单元上；氢气定义在 aGDL 与 aCL 共 $19$ 个网格单元上；氧气定义在 cCL 与 cGDL 共 $25$ 个网格单元上；冰仅定义在 aGDL、aCL、cCL 与 cGDL 共 $44$ 个多孔介质网格单元上（质子交换膜内的水以吸附态结合水描述，不再设置孔隙冰）；$\lambda_{\mathrm{cCL}}$ 为阴极催化层离聚物的平均含水量，作为一个集总状态单独求解。
 
-问题一单电池的分层结构与各物理过程之间的耦合关系如\Cref{fig:p1_coupling} 所示。
+问题一单电池的分层结构、主要传输过程及模型输出如\Cref{fig:p1_coupling} 所示。
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\linewidth,height=0.78\textheight,keepaspectratio,trim=40bp 245bp 40bp 40bp,clip]{figures/problem1_model.pdf}
-  \caption{问题一单电池一维多物理场耦合示意图}
+  \includegraphics[width=0.95\linewidth,height=0.78\textheight,keepaspectratio]{figures/q1_cold_start_model.pdf}
+  \caption{问题一冷启动模型的电池结构、耦合过程与输出指标}
   \label{fig:p1_coupling}
 \end{figure}
 
@@ -567,7 +567,7 @@
 
 \subsubsection{电压损失的分解与机理检验}
 
-\Cref{fig:p1_loss} 与\Cref{tab:p1_loss} 给出各项电压与损失的时间历程。可以发现：
+\Cref{fig:p1_loss} 分别给出 $-20~^{\circ}\mathrm{C}$ 和 $-25~^{\circ}\mathrm{C}$ 工况下的单电池电压、可逆电压与三项极化损失；浓差损失采用右侧纵轴。典型时刻数值见\Cref{tab:p1_loss}。可以发现：
 
 \begin{enumerate}
   \item 可逆电压在全程内的变化约为 $0.007~\mathrm{V}$，浓差损失始终小于 $7\times10^{-5}~\mathrm{V}$；本工况的电压变化主要由活化损失和欧姆损失决定。
@@ -577,8 +577,8 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.82\linewidth]{figures/p1_f_loss.pdf}
-  \caption{可逆电压与三项极化损失的时间历程}
+  \includegraphics[width=14cm]{figures/p1_loss_uniform.pdf}
+  \caption{两个低温工况的单电池电压、可逆电压与三项极化损失}
   \label{fig:p1_loss}
 \end{figure}
 
@@ -605,33 +605,10 @@
 
 两个工况的平均温度曲线均与实验趋势相符，表明模型给出的热响应可用于冷启动策略的初步分析。
 
-\subsection{模型检验}
-\label{sec:model1_check}
-
-\subsubsection{守恒性与数值收敛性}
-
-本次按 \texttt{Code\_ICE\_F} 默认求解设置，以最大步长 $0.01~\mathrm{s}$ 对两个工况重新积分；电压、温度和冰量图均直接由同一组求解状态生成。更细步长的独立收敛性数据未在本次重绘中更新，故不沿用旧版数值。
-
-\subsubsection{参数固定性与可辨识性}
-
-冰覆盖指数 $\gamma_{\mathrm{ice}}=3.5$ 与冻结速率系数 $k_{\mathrm{frz}}=0.4~\mathrm{s^{-1}}$ 在本次计算中固定，未由附件2的电压数据重新辨识。由于缺少冰量实测，模型预测的冰状态仍需后续实验检验。
-
-膜与阴极催化层的水合变化及冰覆盖对有效反应面积的影响见\Cref{fig:p1_hydration}。
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.86\linewidth]{figures/p1_f_hydration.pdf}
-  \caption{PEM 与 cCL 离聚物含水量及水合、冰覆盖面积因子}
-  \label{fig:p1_hydration}
-\end{figure}
-
-\subsubsection{误差来源与预测能力评价}
-
-两个工况在报告时刻的电压相对误差均不超过 $3.84\%$，温度曲线也跟随实验持续升高。$-25~^{\circ}\mathrm{C}$ 工况的温度 RMSE 为 $0.160~^{\circ}\mathrm{C}$，高于 $-20~^{\circ}\mathrm{C}$ 工况的 $0.050~^{\circ}\mathrm{C}$；该温度依赖性的误差是模型后续改进的重点。综合来看，模型能够为后续冷启动策略研究提供经两个低温实验工况检验的基础，但冰的空间分布仍是待验证预测。
-
 \section{问题二模型的建立与求解}
 \label{sec:model2}
 
-问题二将问题一的一维单电池模型扩展到五片串联电堆，并在单位面积累积电荷、单片电压、冰量与电流密度的共同约束下，分别对恒流加载、线性升载和分段阶梯加载三种电流曲线进行优化。三种策略均以五片单电池全部达到启动温度所需时间最短为目标，并在统一的物理参数、数值网格和约束条件下比较其冷启动性能；随后利用优化后的加载策略确定电堆能够实现自冷启动的最低初始温度。
+问题二将问题一的一维单电池模型扩展到五片串联电堆，在累积电荷、单片电压、冰量和电流密度约束下，依次研究恒流、线性升载和分段阶梯三种加载曲线。恒流通过单参数遍历选取，线性升载优化三个连续参数，阶梯加载进一步将切换次数纳入设计；三者均以五片单电池全部达到启动温度的时间为指标，并分析降低初温后的自启动可行性。
 
 \subsection{五片电堆状态与热耦合}
 
@@ -690,7 +667,7 @@
 \subsection{恒流加载策略}
 \label{subsec:q2-cc}
 
-恒流加载是三种候选加载方式中最简单的一种：电流在短暂建立后保持不变，整个启动过程只由平台电流一个设计参数控制。下面依次给出其优化模型、求解方法、仿真设置与优化结果，并基于优化后的固定加载曲线确定电堆的最低自启动初温。
+恒流加载是三种候选加载方式中最简单的一种：电流在短暂建立后保持不变，整个启动过程只由平台电流一个设计参数控制。因此直接遍历平台电流，比较每个取值的启动时间与约束状态，并基于选定曲线确定电堆的低温自启动能力。
 
 \subsubsection{优化模型}
 \label{subsec:q2-cc-model}
@@ -701,117 +678,93 @@
   \qquad j_0=0.0200~\mathrm{A\,cm^{-2}},\quad \tau_r=2~\mathrm{s}.
   \label{eq:q2-cc-current}
 \end{equation}
-恒流加载并不意味着在 $t=0$ 时刻阶跃建立电流。冷启动初始时刻膜处于低水合、高阻抗状态，若瞬间施加平台电流，电渗拖拽将在亚秒级时间尺度内进一步使膜脱水、欧姆阻抗升高，单片电压出现瞬时下冲，严重时甚至发生反极~\cite{hussaini2009transients,gao2022reverse}；同时阴极产水速率突变，大量生成水在膜尚未充分水合时冻结，加速催化层冰堵，这正是恒流启动的主要风险~\cite{yao2020failure}。因此文献普遍推荐以线性或阶梯方式逐渐建立电流，使产热与产水的时序相互匹配~\cite{jiang2010ramping,luo2018coldstart}。据此，本文的恒流协议从 $0.02~\mathrm{A\,cm^{-2}}$ 起、经 $\tau_r=2~\mathrm{s}$ 线性升至平台电流后保持恒流。这一短升流段同时也是模型层面的必要处理：本文单片电压方程为不含双电层电容的准静态形式 $V=E_{\mathrm{rev}}-\eta_{\mathrm{act}}-\eta_{\mathrm{ohm}}-\eta_{\mathrm{con}}$，阶跃电流会使低温干膜上的欧姆与活化过电位瞬时建立，初始电压在 $t=0$ 处即低于 $0.30~\mathrm{V}$ 下限、触发失效事件而无法起步，与真实电子负载有限的电流上升速率也不相符；升流段电荷按梯形计入累计电荷约束。固定 $j_0$ 与 $\tau_r$ 后，恒流协议退化为仅由平台电流 $j_p$ 决定的单参数加载方式，将其归一化为
-\begin{equation}
-  x=\frac{j_p-0.02}{0.48}\in[0,1],
-  \qquad j_p=0.02+0.48\,x.
-  \label{eq:q2-cc-decode}
-\end{equation}
-目标函数与约束形式与线性升载策略相同，即式\eqref{eq:q2-objective}定义的启动时间最小化问题，只是搜索域收缩为一维；本结果包的孔隙占用阈值取 $0.99$（见\Cref{tab:q2-cc-settings}）。
-
-固定参考组取平台电流 $j_p=0.259937538852887~\mathrm{A\,cm^{-2}}$。该电流最初由前一轮拉丁超立方初采样发现，本轮中被固定并重新仿真复核；参考组本身经过参数选择，不应表述为“未经选择的原始恒流加载”。参考组与优化组仅平台电流不同，物理参数、网格、积分设置与约束完全一致。
+为避免低温初始阶段电流突变，采用 $2~\mathrm{s}$ 的短升流段，随后保持平台电流不变。固定 $j_0$ 与 $\tau_r$ 后，平台电流 $j_p$ 是唯一待选择参数。
+目标是在电流、电量、电压和冰水含量约束下，最小化五片电池全部升至 $0~^{\circ}\mathrm{C}$ 的时间。
 
 \subsubsection{求解方法}
 \label{subsec:q2-cc-method}
 
-恒流与线性升载两种策略共用同一套可行性驱动信赖域贝叶斯优化框架，其通用流程与算法细节见小节~\ref{subsec:q2-linear-method}与算法~\ref{alg:q2-search}，此处只给出恒流一维情形的具体配置。
+在 $0.245$--$0.280~\mathrm{A\,cm^{-2}}$ 内选取等距主网格，并在约束边界附近加密，对每个平台电流直接运行同一五片电堆模型。\Cref{fig:q2-cc-trace}中间绘出成功启动点的平台电流与启动时间，两侧阴影概括同配置下已评价的低、高电流失败样本；仅中段横轴按连续电流刻度绘制。低电流样本升温缓慢、冰量累积，高电流样本较早出现较大压降；两侧的直接终止事件均为单片电压触及 $0.30~\mathrm{V}$。失败点不赋予启动时间，已评价区间之间尚有未测试的电流值，因此阴影不代表精确的可行域边界。
 
-设 $V_{\lim}=0.30~\mathrm{V}$、$q_{\lim}=20~\mathrm{C\,cm^{-2}}$、$\varepsilon_{\mathrm{ice,lim}}=0.99$、$j_{\lim}=0.5~\mathrm{A\,cm^{-2}}$ 为各约束阈值，$t_{\mathrm{end}}$ 为终止时刻，定义全程最大电流密度 $j^{\max}=\max_t j(t)$、全程最大局部冰体积分数 $\varepsilon_{\mathrm{ice}}^{\max}$ 与全程最大孔隙占用 $s_{\mathrm{pore}}^{\max}=\max_{k,x}(\varepsilon_{l,k}+\varepsilon_{i,k})$。约束违例指标取各归一化裕度的最大值
-\begin{equation}
-  \begin{aligned}
-    G(x)=\max\Bigg\{&\,\frac{V_{\lim}-V_{\min}}{V_{\lim}},\
-    \frac{q_{\mathrm{use}}-q_{\lim}}{q_{\lim}},\
-    \frac{\varepsilon_{\mathrm{ice}}^{\max}-\varepsilon_{\mathrm{ice,lim}}}{\varepsilon_{\mathrm{ice,lim}}},\\
-    &\,\frac{j^{\max}-j_{\lim}}{j_{\lim}},\
-    \frac{s_{\mathrm{pore}}^{\max}-s_{\mathrm{pore,lim}}}{s_{\mathrm{pore,lim}}},\
-    -\frac{\min_k\bar T_k(t_{\mathrm{end}})}{|T_0|}\Bigg\},
-  \end{aligned}
-  \label{eq:q2-cc-violation}
-\end{equation}
-各分量在约束满足时为负、违反时为正。成功样本的 $G\le0$，物理失败样本的 $G>0$。可行性高斯过程以 $G$ 为训练目标，启动时间高斯过程仅用成功样本的 $t_s$ 训练。每次真实评价设置 $300~\mathrm{s}$ 计算时间保护：超时视为数值未完成而非物理失败，相应样本标为高违例、不参与可行性模型训练，也绝不作为最终候选。采集函数仍为解析 LogEI 与对数可行概率之和，即式\eqref{eq:q2-acquisition}。
-
-搜索总预算为 30 次真实模型评价。前 12 个样本在 $[0.245,0.270]~\mathrm{A\,cm^{-2}}$ 窗口内用最大最小准则拉丁超立方生成，其中第一个样本固定为参考点；此后候选平台电流仍允许在整个 $[0.02,0.5]~\mathrm{A\,cm^{-2}}$ 区间内选取。FuRBO 信赖域取初始半径 $R_0=1$，每轮生成 $1000$ 个球内检查点，由预测最优的前 $10\%$ 的包络构造超矩形信赖域（最小宽度 $0.01$），并在其中用拉丁超立方生成 $512$ 个候选点；连续两次改进则半径加倍，连续三次未改进则减半，半径低于 $5\times10^{-8}$ 时重置为 1。每轮评价后保存检查点以便断点续算；搜索结束后对最优候选独立重跑真实模型，要求启动时间在 $0.02~\mathrm{s}$ 内复现，否则拒绝该候选。
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=14cm]{figures/q2_constant_trace_uniform.pdf}
+  \caption{恒流加载的三类已评价结果（两端阴影为失败样本）}
+  \label{fig:q2-cc-trace}
+\end{figure}
 
 \subsubsection{仿真设置}
 \label{subsec:q2-cc-settings}
 
-参考组与优化组均在相同条件下重新计算。与\Cref{tab:q2-settings}（线性升载结果包的主要设置）相比，本结果包的差异项见\Cref{tab:q2-cc-settings}；端板独立热节点、共享双极板计数、初始温度 $-10~^{\circ}\mathrm{C}$ 等其余设置一致。
+各候选曲线均采用初温 $-10~^{\circ}\mathrm{C}$、五片耦合模型和快速网格 $[2,3,4,4,2]$，主要设置见\Cref{tab:q2-cc-settings}。
 
 \begin{table}[H]
   \centering
-  \caption{恒流加载结果包与线性升载结果包的设置差异}
+  \caption{恒流加载的主要仿真设置}
   \label{tab:q2-cc-settings}
-  \begin{tabularx}{0.94\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.27\linewidth}>{\raggedright\arraybackslash}p{0.27\linewidth}}
+  \begin{tabularx}{0.74\linewidth}{>{\raggedright\arraybackslash}X>{\centering\arraybackslash}X}
     \toprule
-    设置项 & 恒流结果包取值 & 线性升载结果包取值\\
+    设置项 & 取值\\
     \midrule
-    结冰速率常数 $k_{\mathrm{freeze}}/\mathrm{s^{-1}}$ & $0.3$ & $0.4$\\
-    求解器容差 & $\mathrm{RelTol}=10^{-4}$，$\mathrm{AbsTol}=10^{-8}$ & $\mathrm{RelTol}=5\times10^{-5}$，$\mathrm{AbsTol}=5\times10^{-9}$\\
-    孔隙占用阈值 & $\varepsilon_l+\varepsilon_i<0.99$ & $\varepsilon_l+\varepsilon_i<0.98$\\
+    初始温度/$^{\circ}\mathrm{C}$ & $-10$\\
+    快速网格 & $[2,3,4,4,2]$\\
+    结冰速率常数 $k_{\mathrm{freeze}}/\mathrm{s^{-1}}$ & $0.3$\\
+    孔隙占用阈值 & $\varepsilon_l+\varepsilon_i<0.99$\\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-两个结果包采用不同的快速计算口径，差异已如实记录；最终验证时应与问题一的标定口径统一，并以完整网格复核。
-
 \subsubsection{优化结果与约束分析}
 \label{subsec:q2-cc-results}
 
-同网格复算结果见\Cref{tab:q2-cc-results}与\Cref{fig:q2-cc-comparison}。
+遍历得到的最短可行启动时间为 $64.938125~\mathrm{s}$，对应平台电流 $j_p=0.267000~\mathrm{A\,cm^{-2}}$。其同网格复算结果见\Cref{tab:q2-cc-results}与\Cref{fig:q2-cc-comparison}。
 
 \begin{table}[H]
   \centering
-  \caption{固定参考组与优化组的恒流加载仿真结果}
+  \caption{选定恒流加载曲线的仿真结果}
   \label{tab:q2-cc-results}
-  \begin{tabular}{lcc}
+  \begin{tabular}{lc}
     \toprule
-    指标 & 固定参考组 & 优化组\\
+    指标 & 选定曲线\\
     \midrule
-    平台电流密度 $j_p/(\mathrm{A\,cm^{-2}})$ & 0.259938 & 0.266881\\
-    启动时间 $t_s/\mathrm{s}$ & 68.262427 & 65.005821\\
-    全程最低单片电压 $V_{\min}/\mathrm{V}$ & 0.332456 & 0.324078\\
+    平台电流密度 $j_p/(\mathrm{A\,cm^{-2}})$ & 0.267000\\
+    启动时间 $t_s/\mathrm{s}$ & 64.938125\\
+    全程最低单片电压 $V_{\min}/\mathrm{V}$ & 0.323935\\
     \bottomrule
   \end{tabular}
 \end{table}
 
-优化使启动时间缩短 $3.2566~\mathrm{s}$，相对降幅 $4.7707\%$。30 次真实模型评价中，18 次成功启动、12 次触发物理失败条件、0 次数值未完成；最优解来自第 28 次评价（第 13 次起进入自适应选点阶段），独立重跑得到相同启动结果。
-
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.98\linewidth]{figures/q2_constant_comparison_30eval.png}
-  \caption{固定参考组与优化组的同网格对比：左上为加载电流密度曲线（$2~\mathrm{s}$ 升流后保持恒流），右上为最冷单片平均温度（虚线为 $0~^{\circ}\mathrm{C}$ 启动线），左下为全程最低单片电压（虚线为 $0.30~\mathrm{V}$ 下限），右下为历次真实评价中最佳成功启动时间的收敛过程（虚线为固定参考组，竖点线为初始采样结束、自适应选点开始）}
+  \includegraphics[width=14cm]{figures/q2_constant_comparison_uniform.pdf}
+  \caption{选定恒流加载曲线的电流、温度、电压与最大冰体积分数}
   \label{fig:q2-cc-comparison}
 \end{figure}
 
-与线性升载情形相比，恒流优化的改善幅度较小：优化组平台电流仅比参考组提高约 $2.67\%$，启动时间缩短 $4.77\%$。这符合恒流加载只有单自由度可调的事实，也说明 $-10~^{\circ}\mathrm{C}$ 初温下该协议的可优化裕度有限。约束分析显示电压下限仍是首要瓶颈：优化组全程最低单片电压 $0.324078~\mathrm{V}$，距 $0.30~\mathrm{V}$ 下限仅 $0.0241~\mathrm{V}$；启动时累积电荷 $17.1019~\mathrm{C\,cm^{-2}}$，仅为上限的 $85.5\%$；平台电流远未触及 $0.5~\mathrm{A\,cm^{-2}}$ 上限。继续提高平台电流首先会使单片电压提前触限，而非触及电荷或冰量上限，与线性升载情形的结论一致。表中结果为 30 次预算内的最佳实测值，不代表全局最优。
+选定曲线的全程最低单片电压为 $0.323935~\mathrm{V}$，启动时累积电荷为 $17.0915~\mathrm{C\,cm^{-2}}$，均满足约束；下一网格点 $0.268~\mathrm{A\,cm^{-2}}$ 在启动前触及电压下限，表明进一步升高平台电流首先受单片电压约束限制。
 
 \subsubsection{最低自启动初温}
 \label{subsec:q2-cc-mintemp}
 
-将优化后的加载曲线固定，在粗网格模型下搜索最低可自冷启动初温：先在已验证的 $-10~^{\circ}\mathrm{C}$ 结果基础上以 $1~^{\circ}\mathrm{C}$ 步长向下试算 $-11$、$-12~^{\circ}\mathrm{C},\ldots$，直至首次失败；再在最近成功初温与最近失败初温之间二分细化，直至区间宽度小于 $0.01~^{\circ}\mathrm{C}$。每次试算同时将电堆初温与环境温度设为待测温度，加载曲线与模型参数保持不变，不在各初温下重新优化。
+将遍历选定的 $j_p=0.267~\mathrm{A\,cm^{-2}}$ 曲线固定，仅改变电堆和环境初温进行二分试算。每次均采用同一快速网格与约束条件，不在不同初温下重新选取平台电流。
 
 \begin{table}[H]
   \centering
-  \caption{固定优化恒流曲线下的最低初温搜索结果}
+  \caption{固定选定恒流曲线下的低温试算结果}
   \label{tab:q2-cc-mintemp}
   \small
   \begin{tabularx}{0.94\linewidth}{>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
     \toprule
     初温/$^{\circ}\mathrm{C}$ & 结果 & 启动/终止时间/s & 最低单片电压/V & 累计电荷/$(\mathrm{C\,cm^{-2}})$ & 最大局部冰体积分数\\
     \midrule
-    $-10$ & 成功 & 65.005821 & 0.324078 & 17.101926 & —\\
-    $-11$ & 成功 & 73.382959 & 0.316168 & 19.337628 & 0.398985\\
-    $-11.0703125$ & 成功 & 73.916039 & 0.301405 & 19.479895 & 0.400590\\
-    $-11.078125$ & 失败 & 64.737831 & 0.300000 & 17.030408 & 0.400203\\
+    $-10$ & 成功 & 64.938125 & 0.323935 & 17.091480 & 0.366777\\
+    $-11.125$ & 成功 & 73.776638 & 0.302882 & 19.451363 & 0.400421\\
+    $-11.1625$ & 失败 & 64.342898 & 0.300000 & 16.932555 & 0.399718\\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-在已测试的固定曲线与粗网格模型下，最冷的已验证成功初温为 $-11.0703125~^{\circ}\mathrm{C}$，紧邻的 $-11.078125~^{\circ}\mathrm{C}$ 失败；若临界点附近的成功性随初温单调变化，临界初温位于两者之间，区间宽度约 $0.0078~^{\circ}\mathrm{C}$。因此宜报告“约 $-11.07~^{\circ}\mathrm{C}$（数值搜索结果）”，不应把小数位当作物理测量精度。
-
-失败工况的分析给出直接失效路径。在 $-11.078125~^{\circ}\mathrm{C}$ 下，第 1 片最先在 $64.7378~\mathrm{s}$ 降至 $0.30~\mathrm{V}$；此时第 1 片平均温度约 $-0.599~^{\circ}\mathrm{C}$、最大局部冰体积分数约 $0.4002$，第 5 片约 $-0.247~^{\circ}\mathrm{C}$，而第 2–4 片已高于 $2~^{\circ}\mathrm{C}$。冰体积分数与累计电荷均未达到各自上限，端部第 1 片持续偏冷、局部结冰及随之加重的电压损失构成直接失败路径。成功工况在约 $65~\mathrm{s}$ 处最低单片电压仍为 $0.301405~\mathrm{V}$，随后电压恢复并最终完成升温，说明 $-11.07~^{\circ}\mathrm{C}$ 附近的启动对电压裕度高度敏感。
-
-该最低初温是固定加载曲线、粗网格下的数值搜索结果，尚未用完整网格验证，也不能据此声称允许重新优化加载曲线时的全局最低初温。
+在已测温度中，$-11.125~^{\circ}\mathrm{C}$ 是最冷的成功点，$-11.1625~^{\circ}\mathrm{C}$ 为相邻失败点。若临界点附近的成功性随初温单调变化，则这条固定曲线的临界初温位于二者之间。失败时第 1 片首先触及 $0.30~\mathrm{V}$ 电压下限，累计电荷和冰量均未达到上限，表明端部单电池的电压约束决定该曲线的低温边界。以上仅为快速网格数值试算结果，不代表允许重新设计加载曲线时的全局最低初温。
 
 \subsection{线性升载策略}
 \label{subsec:q2-linear}
@@ -828,16 +781,16 @@
 \end{equation}
 搜索范围取
 \begin{equation}
-  0\le j_0\le0.50,\qquad
-  0.001\le r\le0.050,\qquad
-  j_0\le j_p\le0.50,
+  0\le j_0\le0.20,\qquad
+  0\le r\le0.020,\qquad
+  0.30\le j_p\le0.50,
   \label{eq:q2-search-domain}
 \end{equation}
 为提高代理模型的数值稳定性，将三个变量归一化到 $[0,1]^3$：
 \begin{equation}
-  x_1=\frac{j_0}{0.50},\qquad
-  x_2=\frac{r-0.001}{0.049},\qquad
-  x_3=\frac{j_p-j_0}{0.50-j_0}.
+  x_1=\frac{j_0}{0.20},\qquad
+  x_2=\frac{r}{0.020},\qquad
+  x_3=\frac{j_p-0.30}{0.20}.
 \end{equation}
 
 定义启动时刻 $t_s$ 为五片单电池平均温度全部首次达到 $0~^{\circ}\mathrm{C}$ 的时刻。优化问题为
@@ -859,7 +812,7 @@
 
 单次五片冷启动仿真包含刚性微分方程和事件终止，目标函数不光滑，且一次真实评估成本较高。本文采用受可行性驱动信赖域贝叶斯优化 FuRBO 启发的候选区域构造方法~\cite{ascia2025furbo}，并用 LogEI 代替 FuRBO 原算法的联合 Thompson 采样采集函数~\cite{ament2023logei}。因此，本方法是面向本题的组合式实现，并非 FuRBO 的严格复现。
 
-对已评价样本分别建立两个高斯过程代理模型：可行性模型以启动成功或失败的二元标签为训练目标，时间模型只拟合成功样本的 $t_s$。每轮以当前最佳真实可行点为中心，在半径为 $R$ 的球内生成检查点；根据预测可行概率与预测启动时间选出较优检查点，并用其包络得到本轮超矩形信赖域。在该区域内先用拉丁超立方生成候选，再最大化
+对已评价样本分别建立两个高斯过程代理模型：可行性模型以启动成功或失败的二元标签为训练目标，时间模型只拟合成功样本的 $t_s$。找到可行点后，每轮以当前最佳真实可行点为中心，在半径为 $R$ 的球内生成检查点；根据预测可行概率与预测启动时间选出较优检查点，并用其包络得到本轮超矩形信赖域。在该区域内先用拉丁超立方生成候选，再最大化
 \begin{equation}
   \log a(\bm{x})=
   \operatorname{LogEI}\!\left(\bm{x};t_s^{\mathrm{best}}\right)
@@ -868,12 +821,14 @@
 \end{equation}
 LogEI 与普通期望改进具有相同或近似相同的最优点，但能避免期望改进在小数值区域下溢，使候选排序更稳定。代理模型只用于选择下一次评价点；最终报告的最优解必须经过完整的五片物理模型重新计算。
 
+在式\eqref{eq:q2-search-domain}给定的参数范围内，先生成 $32$ 个空间填充样本，以获得可行性和启动时间的初始观测；随后由代理模型依次选择 $32$ 个评价点。搜索不依赖预设的参考加载曲线。
+
 \begin{algorithm}[H]
   \caption{可行性驱动信赖域贝叶斯搜索（以线性加载参数为例）}
   \label{alg:q2-search}
   \begin{algorithmic}[1]
     \REQUIRE 归一化搜索域 $[0,1]^3$，真实五片模型，最大评价次数
-    \STATE 用最大最小准则拉丁超立方生成初始样本并逐一真实仿真
+    \STATE 在式\eqref{eq:q2-search-domain}的范围内生成空间填充初始样本，并逐一真实仿真
     \WHILE{真实模型评价次数未达到上限}
       \STATE 用有效样本拟合可行性高斯过程，用成功样本拟合启动时间高斯过程
       \STATE 以当前最佳真实可行点为中心，在半径 $R$ 内生成检查点
@@ -886,186 +841,325 @@ LogEI 与普通期望改进具有相同或近似相同的最优点，但能避�
   \end{algorithmic}
 \end{algorithm}
 
-实现中使用 \texttt{fitrgp} 拟合自动相关长度平方指数核高斯过程，使用 \texttt{lhsdesign} 生成初始样本、检查区域内的候选点，并保存评价记录与信赖域状态以便断点续算。数值失败样本消耗评价预算，但不作为物理不可行标签训练可行性模型，从而避免把求解器故障误判为电堆失效。
+\Cref{fig:q2-linear-trace}展示了从零开始的 $64$ 次模型评价：前 $32$ 次为空间填充采样，后 $32$ 次根据代理模型选点。可行方案逐渐集中于启动较快的参数区域，最短启动时间出现在第 $61$ 次评价。图中的上下虚线表示当轮搜索范围。
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=14cm]{figures/q2_linear_trace_uniform.pdf}
+  \caption{线性升载参数的搜索过程}
+  \label{fig:q2-linear-trace}
+\end{figure}
+
+\Cref{fig:q2-linear-parameter-cloud}只展示后 $32$ 次代理模型选点在 $(j_0,r,j_p)$ 空间中的搜索路径。连线按评价顺序连接候选点，成功点按启动时间 $t_s$ 着色，未成功点为灰色；方形标记为第 $33$ 次评价，星形标记为最优的第 $61$ 次评价。半透明球标示末期样本集中的搜索邻域，并非球内所有策略都已验证可行。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=14cm]{figures/q2_linear_parameter_cloud_uniform.pdf}
+  \caption{线性升载代理模型选点的空间轨迹与末期搜索邻域（灰色点为未成功评价）}
+  \label{fig:q2-linear-parameter-cloud}
+\end{figure}
 
 \subsubsection{仿真设置}
 
-未优化方案与优化方案均在相同物理参数、相同快速网格和相同求解容差下重新计算，设置见\Cref{tab:q2-settings}。该公平对比避免了历史检查点、网格和容差不同造成的偏差。
+各候选方案在相同模型和快速网格上计算，设置见\Cref{tab:q2-settings}。
 
 \begin{table}[H]
   \centering
-  \caption{问题二线性加载对比的主要仿真设置}
+  \caption{问题二线性加载的主要仿真设置}
   \label{tab:q2-settings}
-  \begin{tabularx}{0.94\linewidth}{>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{0.31\linewidth}>{\raggedright\arraybackslash}p{0.31\linewidth}}
+  \begin{tabularx}{0.78\linewidth}{>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{0.47\linewidth}}
     \toprule
-    设置项 & 取值 & 说明\\
+    设置项 & 取值\\
     \midrule
-    初始温度 & $-10~^{\circ}\mathrm{C}$ & 五片单电池与两块端板同温初始化\\
-    单片快速网格 & $[2,3,4,4,2]$ & 依次对应五个功能层\\
-    相变与冰覆盖参数 & $k_{\mathrm{freeze}}=0.4~\mathrm{s^{-1}}$，$\gamma_{\mathrm{ice}}=3.5$ & 本结果包的快速计算口径\\
-    相变平滑宽度 & $0.2~\mathrm{K}$ & 消除冰点附近硬切换导致的步长失败\\
-    求解器容差 & $\mathrm{RelTol}=5\times10^{-5}$，$\mathrm{AbsTol}=5\times10^{-9}$ & 两个方案完全一致\\
-    最大步长与输出步长 & $0.05~\mathrm{s}$，$0.5~\mathrm{s}$ & 启动事件由求解器连续定位\\
-    端板与双极板处理 & 独立端板，共享双极板计数 & 避免端板同温假设和双极板热容重复计数\\
-    约束阈值 & $j\le0.50$，$V_k\ge0.30$，$q_{\mathrm{use}}\le20$ & 全过程事件约束\\
-    冰与孔隙阈值 & $\varepsilon_{\mathrm{ice}}<0.99$，$\varepsilon_l+\varepsilon_i<0.98$ & 对全部单片与空间节点检查\\
+    初始温度 & $-10~^{\circ}\mathrm{C}$\\
+    单片快速网格 & $[2,3,4,4,2]$\\
+    相变与冰覆盖参数 & $k_{\mathrm{freeze}}=0.4~\mathrm{s^{-1}}$，$\gamma_{\mathrm{ice}}=3.5$\\
+    端板与双极板处理 & 独立端板，共享双极板计数\\
+    约束阈值 & $j\le0.50$，$V_k\ge0.30$，$q_{\mathrm{use}}\le20$\\
+    冰与孔隙阈值 & $\varepsilon_{\mathrm{ice}}<0.99$，$\varepsilon_l+\varepsilon_i<0.98$\\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-本节参数用于复现当前结果包；最终验证时应与问题一的标定口径统一，并以完整网格复核。
-
 \subsubsection{优化结果与约束分析}
 
-未优化线性方案取 $j_0=0.0200~\mathrm{A\,cm^{-2}}$、$r=0.0100~\mathrm{A\,(cm^2\,s)^{-1}}$、$j_p=0.4000~\mathrm{A\,cm^{-2}}$。真实模型搜索得到的优化方案为
+真实模型搜索得到的最短可行曲线为
 \begin{equation}
-  j_0=0.117641245~\mathrm{A\,cm^{-2}},\qquad
-  r=0.008079398~\mathrm{A\,(cm^2\,s)^{-1}},\qquad
-  j_p=0.447158213~\mathrm{A\,cm^{-2}}.
+  j_0=0.141964965~\mathrm{A\,cm^{-2}},\qquad
+  r=0.007203574~\mathrm{A\,(cm^2\,s)^{-1}},\qquad
+  j_p=0.476005171~\mathrm{A\,cm^{-2}}.
   \label{eq:q2-best-strategy}
 \end{equation}
-同网格复算结果见\Cref{tab:q2-results}与\Cref{fig:q2-linear-comparison}。
+其复算结果见\Cref{tab:q2-results}与\Cref{fig:q2-linear-comparison}。
 
 \begin{table}[H]
   \centering
-  \caption{未优化与优化线性加载方案的同网格仿真结果}
+  \caption{选定线性升载曲线的仿真结果}
   \label{tab:q2-results}
-  \begin{tabular}{lcc}
+  \begin{tabular}{lc}
     \toprule
-    指标 & 未优化方案 & 优化方案\\
+    指标 & 选定曲线\\
     \midrule
-    $j_0/(\mathrm{A\,cm^{-2}})$ & 0.020000 & 0.117641\\
-    $r/(\mathrm{A\,(cm^2\,s)^{-1}})$ & 0.010000 & 0.008079\\
-    $j_p/(\mathrm{A\,cm^{-2}})$ & 0.400000 & 0.447158\\
-    启动时间 $t_s/\mathrm{s}$ & 48.838845 & 40.726546\\
-    启动时累积电荷 $q_{\mathrm{use}}/(\mathrm{C\,cm^{-2}})$ & 12.315537 & 11.491596\\
-    全程最低单片电压 $V_{\min}/\mathrm{V}$ & 0.406337 & 0.311870\\
-    全程最大局部冰体积分数 & 0.343339 & 0.331563\\
-    启动时最大局部冰体积分数 & 0.189204 & 0.197514\\
-    启动时电流密度 $j(t_s)/(\mathrm{A\,cm^{-2}})$ & 0.400000 & 0.446687\\
+    $j_0/(\mathrm{A\,cm^{-2}})$ & 0.141965\\
+    $r/(\mathrm{A\,(cm^2\,s)^{-1}})$ & 0.007204\\
+    $j_p/(\mathrm{A\,cm^{-2}})$ & 0.476005\\
+    启动时间 $t_s/\mathrm{s}$ & 40.558338\\
+    启动时累积电荷 $q_{\mathrm{use}}/(\mathrm{C\,cm^{-2}})$ & 11.682746\\
+    全程最低单片电压 $V_{\min}/\mathrm{V}$ & 0.308672\\
+    全程最大局部冰体积分数 & 0.331532\\
+    启动时最大局部冰体积分数 & 0.178274\\
+    启动时电流密度 $j(t_s)/(\mathrm{A\,cm^{-2}})$ & 0.434130\\
     \bottomrule
   \end{tabular}
 \end{table}
 
-优化方案使启动时间缩短 $8.1123$ s，相对降幅为 $16.61\%$；累积电荷减少 $0.8239$ C/cm$^2$，下降 $6.69\%$。启动提前并非通过无条件提高平台电流实现。优化器把初始电流从 $0.0200$ A/cm$^2$ 提高到 $0.1176$ A/cm$^2$，使冷启动早期更快地产生反应热；随后采用略低的升载斜率，使电流增长与膜水合、温升和融冰过程相匹配，从而在电压不越界的前提下持续增加产热。
+选定曲线从 $0.1420~\mathrm{A\,cm^{-2}}$ 起步，以 $0.007204~\mathrm{A\,(cm^2\,s)^{-1}}$ 持续升载，使电流增长与膜水合、温升和融冰过程相匹配，同时保持单片电压不低于下限。
 
-\Cref{fig:q2-linear-comparison}左上图显示，未优化方案在 $38.0~\mathrm{s}$ 达到 $0.4000~\mathrm{A\,cm^{-2}}$ 的平台，之后继续恒流加热约 $10.84~\mathrm{s}$ 才启动。优化方案的理论平台到达时间为
+\Cref{fig:q2-linear-comparison}左上图显示，选定曲线的理论平台到达时间为
 \begin{equation}
-  t_p=\frac{j_p-j_0}{r}=40.7848~\mathrm{s},
+  t_p=\frac{j_p-j_0}{r}=46.3715~\mathrm{s},
 \end{equation}
-而模型在 $40.7265~\mathrm{s}$ 已启动，此时 $j=0.446687~\mathrm{A\,cm^{-2}}$。因此，优化曲线在启动前尚未真正进入平台阶段，不能将图中的末段表述为已形成稳定平台。
+模型在 $40.5583~\mathrm{s}$ 已启动，此时 $j=0.434130~\mathrm{A\,cm^{-2}}$。因此，曲线在启动前尚未进入平台阶段，主要通过持续升载加热。
 
-温度结果表明，优化后最冷单片更早达到 $0~^{\circ}\mathrm{C}$。启动时五片平均温度依次约为 $0$、$5.061$、$6.608$、$5.238$ 和 $0.365~^{\circ}\mathrm{C}$，中部单片温升更快，第一片仍是决定启动时刻的热约束单片。此时左右端板温度约为 $-6.32$ 和 $-6.28~^{\circ}\mathrm{C}$，说明将端板设为独立热节点是必要的；若强制端板与端部单片同温，将明显改变端部热惯性与启动判定。
+温度结果表明，最冷单片在 $40.5583~\mathrm{s}$ 达到 $0~^{\circ}\mathrm{C}$。启动时五片平均温度依次约为 $0$、$4.834$、$6.358$、$4.997$ 和 $0.347~^{\circ}\mathrm{C}$，中部单片温升更快，第一片仍是决定启动时刻的热约束单片。此时左右端板温度约为 $-6.17$ 和 $-6.13~^{\circ}\mathrm{C}$，说明将端板设为独立热节点是必要的；若强制端板与端部单片同温，将明显改变端部热惯性与启动判定。
 
-电压约束是继续缩短启动时间的主要瓶颈。优化方案的全程最低单片电压为 $0.311870$ V，出现在约 $36$ s 的第4片，距离 $0.30$ V 下限仅 $0.011870$ V。此后尽管电流仍在上升，温升、膜水合改善及局部融冰使电压重新回升。相比之下，电流上限尚有约 $0.0533$ A/cm$^2$ 的余量，累积电荷只使用上限的 $57.46\%$，冰体积分数和孔隙占用也远未达到失败阈值。因此，在当前模型参数下，简单提高初始电流或升载速率首先会触及单片低电压边界，而不是电荷或冰量上限。
+电压约束是继续缩短启动时间的主要瓶颈。选定曲线的全程最低单片电压为 $0.308672$ V，出现在约 $31.0$ s 的第3片，距离 $0.30$ V 下限仅 $0.008672$ V。此后尽管电流仍在上升，温升、膜水合改善及局部融冰使电压重新回升。启动时电流距离上限尚有约 $0.0659$ A/cm$^2$ 的余量，累积电荷只使用上限的 $58.41\%$，冰体积分数和孔隙占用也远未达到失败阈值。因此，在当前模型参数下，简单提高初始电流或升载速率首先会触及单片低电压边界，而不是电荷或冰量上限。
 
-冰量曲线显示，优化方案的最大局部冰体积分数在约 $39~\mathrm{s}$ 达到 $0.3316$，随后随局部温度接近冰点而快速下降，启动时降至 $0.1975$。全程最大冰量出现在第1片，与其端部散热较强、温升最慢相一致；最低电压却出现在第4片，说明热约束、冰约束和电压约束不一定由同一片电池控制。加载策略必须对五片电池的完整历史同时检查，不能只依据平均堆温或总电压判断启动是否安全。
+冰量曲线显示，选定曲线的最大局部冰体积分数在约 $38.5~\mathrm{s}$ 达到 $0.3315$，随后随局部温度接近冰点而快速下降，启动时降至 $0.1783$。全程最大冰量出现在第1片，与其端部散热较强、温升最慢相一致；最低电压却出现在第3片，说明热约束、冰约束和电压约束不一定由同一片电池控制。加载策略必须对五片电池的完整历史同时检查，不能只依据平均堆温或总电压判断启动是否安全。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.98\linewidth]{figures/q2_linear_comparison.png}
-  \caption{未优化与优化线性加载方案在同一快速网格下的模型仿真对比}
+  \includegraphics[width=14cm]{figures/q2_linear_comparison_uniform.pdf}
+  \caption{选定线性升载曲线的电流、温度、电压与冰量}
   \label{fig:q2-linear-comparison}
 \end{figure}
 
-将求解器相对容差和绝对容差在对比设置基础上再收紧一倍，优化方案仍成功启动，得到 $40.7242~\mathrm{s}$，与表中结果仅相差约 $0.0023~\mathrm{s}$。这说明该候选点对当前快速网格上的时间积分容差不敏感，但尚不能替代空间完整网格验证。
+\subsubsection{兼顾启动速度的低温可行性检验}
+\label{subsec:q2-linear-mintemp}
 
-% ===== 分段阶梯加载策略（五档九变量结果包） =====
+上述 $40.5583~\mathrm{s}$ 曲线针对 $-10~^{\circ}\mathrm{C}$ 下的启动时间最小化。若进一步考察更低初温，可允许该工况的启动时间至多增加 $5\%$，即将时间上限设为 $1.05\times40.558338=42.586255~\mathrm{s}$。另行考察的低温检验曲线在 $-10~^{\circ}\mathrm{C}$ 下满足此限，其固定形式为
+\begin{equation}
+  j(t)=\min\{0.144980840+0.006798555t,\;0.478303370\}
+  \quad(\mathrm{A\,cm^{-2}}).
+  \label{eq:q2-linear-lowtemp-strategy}
+\end{equation}
+它不是前述 $-10~^{\circ}\mathrm{C}$ 最快曲线：同口径下的启动时间约为 $41.992~\mathrm{s}$，比最快曲线增加约 $3.53\%$，仍在 $5\%$ 容差内。检验时固定式\eqref{eq:q2-linear-lowtemp-strategy}的全部加载参数，只将五片电池初温与环境温度同步改为待测温度。用更新后的独立代码复算结果见\Cref{tab:q2-linear-lowtemp}。
 
+\begin{table}[H]
+  \centering
+  \caption{固定线性加载曲线在不同初温下的快速网格复算}
+  \label{tab:q2-linear-lowtemp}
+  \begin{tabular}{ccccc}
+    \toprule
+    \shortstack{初始及环境温度\\$T_0/^{\circ}\mathrm{C}$} & 结果 & \shortstack{启动或终止时间\\$t/\mathrm{s}$} & \shortstack{最低单片电压\\$V_{\min}/\mathrm{V}$} & \shortstack{终止时累计电荷\\$q_{\mathrm{use}}/(\mathrm{C\,cm^{-2}})$}\\
+    \midrule
+    $-10$ & 成功 & 41.9918 & 0.39734 & 12.0820\\
+    $-11$ & 成功 & 44.6723 & 0.35764 & 13.2603\\
+    $-12$ & 第4片失压 & 39.3849 & 0.30000 & 10.9829\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+$-12~^{\circ}\mathrm{C}$ 时，第4片单电池先触及 $0.30~\mathrm{V}$ 下限；此时累计电荷仍低于 $20~\mathrm{C\,cm^{-2}}$，最大局部冰体积分数约为 $0.3400$，也未达到冰量上限。因此，这条固定曲线在该已测温度下的直接失败原因是单片失压，而不是电荷耗尽或冰体积分数越限。$-11~^{\circ}\mathrm{C}$ 是目前已复算的最冷成功点，$-12~^{\circ}\mathrm{C}$ 是已测失败点；两点之间尚未二分，也未在每个初温重新优化曲线，不能把 $-11~^{\circ}\mathrm{C}$ 称为精确或全局最低自启动初温。以上差异仅为当前快速网格的模型仿真结果。
+
+% ===== 分段阶梯加载策略（阶梯数可变） =====
+
+\clearpage
 \subsection{分段阶梯加载策略}
 \label{subsec:q2-step}
 
-分段阶梯加载以若干恒流档位近似任意电流曲线：档位越多，对连续曲线的逼近能力越强，但待定参数也越多。本节先给出四档未优化基准，再对五档曲线的全部九个参数（五个档位电流与四个切换时刻）进行联合优化。
+分段阶梯加载通过改变各时段电流，协调产热与产水。与仅搜索一个平台电流的恒流策略和搜索三个连续参数的线性升载策略不同，此处还需确定电流切换次数，即曲线结构本身也是设计变量。
 
 \subsubsection{优化模型}
 \label{subsec:q2-step-model}
 
-五档阶梯加载曲线由五个档位电流与四个切换时刻完全确定：
+令 $K$ 为电流切换次数，则曲线有 $K+1$ 个电流平台，其表达式为
 \begin{equation}
-  j(t;\bm{\theta})=j_i,\quad t_{i-1}\le t<t_i,\ i=1,\ldots,5,
+  j(t;K,\bm{\theta}_K)=j_i,\quad t_{i-1}\le t<t_i,
+  \quad i=1,\ldots,K+1,
   \qquad
-  \bm{\theta}=(j_1,\ldots,j_5,t_1,\ldots,t_4),
+  \bm{\theta}_K=(j_1,\ldots,j_{K+1},t_1,\ldots,t_K),
   \label{eq:q2-step-current}
 \end{equation}
-其中 $t_0=0$，并约定 $t\ge t_4$ 后保持 $j_5$。五个档位电流的物理范围均为 $[0,0.5]~\mathrm{A\,cm^{-2}}$；四个切换时刻依次在互不重叠的数值搜索窗 $[1,8]$、$[8.1,16.9]$、$[17,23.9]$、$[24,38]~\mathrm{s}$ 内搜索。归一化方式为
+其中 $t_0=0$，$t_{K+1}=\infty$，$0\le j_i\le0.5~\mathrm{A\,cm^{-2}}$，且 $t_1<\cdots<t_K$。因此，对给定 $K$ 有 $2K+1$ 个连续参数；电流平台不限定为单调递增。优化问题为
 \begin{equation}
-  x_i=\frac{j_i}{0.5}\ (i=1,\ldots,5),\qquad
-  x_{5+k}=\frac{t_k-t_k^{\mathrm{L}}}{t_k^{\mathrm{U}}-t_k^{\mathrm{L}}}\ (k=1,\ldots,4),
+  \min_{K,\bm{\theta}_K}\ t_s(K,\bm{\theta}_K;-10~^{\circ}\mathrm{C}),
+  \qquad
+  \text{s.t. 电流、电量、电压及冰量约束},
   \label{eq:q2-step-decode}
 \end{equation}
-其中 $t_k^{\mathrm{L}}$、$t_k^{\mathrm{U}}$ 为第 $k$ 个切换时刻搜索窗的上下界。需要强调的是，切换时刻的搜索窗只是数值搜索范围而非题目给定的物理界限，若最优点落在某窗口边界，应扩窗复核。目标函数与约束与式\eqref{eq:q2-objective}相同，此时优化问题为九维变量空间上的启动时间最小化。
-
-未优化基准采用可启动的四档曲线 $(j_1,j_2,j_3,j_4)=(0.15,0.18,0.30,0.40)~\mathrm{A\,cm^{-2}}$、切换时刻 $(5,15,35)~\mathrm{s}$。其档位与切换时刻均未经优化，只用于衡量阶梯加载在未经参数选择时的启动性能。
+其中运行约束与式\eqref{eq:q2-objective}一致。计算时将 $K$ 限于 $1$ 至 $7$，作为有限预算下的搜索范围，而非预先指定阶梯数。
 
 \subsubsection{求解方法}
 \label{subsec:q2-step-method}
 
-求解沿用与前两节相同的可行性驱动信赖域贝叶斯优化框架（算法~\ref{alg:q2-search} 与式\eqref{eq:q2-acquisition}），针对九维空间做如下配置。信赖域初始半径 $R_0=0.65$、下限 $0.10$，连续两次改进加倍、连续三次未改进减半；每轮生成 $512$ 个球内检查点，由预测最优的前 $10\%$ 构造超矩形信赖域，并强制把当前最优真实可行点纳入检查点集合，避免代理排序失真时信赖域偏离该任职点。候选池含 $512$ 个信赖域内拉丁超立方样本，并混入 $20\%$ 的全局候选，另每 $6$ 轮强制一次全局探查，以缓解九维信赖域的局部化风险；候选点与已有成功点的归一化距离超过 $0.32$ 时被剔除。采集函数为解析 LogEI 与对数可行概率之和，并在可行概率上叠加经验邻域校正项（带宽 $0.6R$、权重 $0.5$），抑制稀疏样本下高斯过程的过度自信；当池内最高可行概率低于 $0.10$ 时转入纯可行性营救模式。采集函数本身在信赖域内以对数变换配合 Nelder–Mead 局部精修，取 $3$ 个不同初值。
-
-约束学习采用事件感知方式：事件驱动的求解器恰好终止在约束边界上，失败样本的电压裕度常为零，仅学习二元成功标签会低估较早失败的严重性；因此在符号化违例指标 $G$ 上叠加早期事件惩罚项 $0.01+0.25\max(0,(60-t_{\mathrm{term}})/60)$，其中 $t_{\mathrm{term}}$ 为终止时刻。数值失败样本与“在已知最快启动时间加 $0.5~\mathrm{s}$ 的截止前未启动”的时间截断样本均不参与代理模型训练；时间截断用于控制单次评价成本，不计为物理失败。历史真实仿真仅在物理源码与设置完全一致的校验戳下复用，换路径后的首次运行会重新仿真已发表最优点。
-
-该实现是 FuRBO 与 LogEI 的工程化组合（全局候选混合、事件感知约束学习、经验邻域校正、任职点锚定与时间截断），并非两篇文献算法的逐字复现。
+采用变结构代理辅助搜索：先评价初始候选曲线，再对相邻平台合并、现有平台拆分，并微调电流和切换时刻，形成不同 $K$ 的候选集。以高斯过程估计候选的启动时间，优先计算预测启动较快且与已有样本有差异的曲线；每个入选候选仍由五片模型真实仿真并检查约束，再更新代理模型和当前最优解。合并和拆分使搜索能够改变参数维数，而不必先固定阶梯数。该有限预算搜索给出可行方案，不声称已找到全局最优阶梯数。
 
 \subsubsection{仿真设置}
 \label{subsec:q2-step-settings}
 
-本结果包与线性升载结果包采用相同的快速计算口径：$k_{\mathrm{freeze}}=0.4~\mathrm{s^{-1}}$（取题目给定范围 $0.3\sim0.5~\mathrm{s^{-1}}$ 的中点）、$\gamma_{\mathrm{ice}}=3.5$、粗网格 $[2,3,4,4,2]$、$\mathrm{RelTol}=10^{-4}$、$\mathrm{AbsTol}=10^{-8}$、孔隙占用阈值 $0.98$，其余设置与\Cref{tab:q2-settings}一致。最优方案另行用更严格容差（$\mathrm{RelTol}=5\times10^{-5}$、$\mathrm{AbsTol}=5\times10^{-9}$）独立复核。
+优化工况的五片电池和环境初温均为 $-10~^{\circ}\mathrm{C}$，采用 $k_{\mathrm{freeze}}=0.4~\mathrm{s^{-1}}$、$\gamma_{\mathrm{ice}}=3.5$ 和快速网格 $[2,3,4,4,2]$；电流、电量及单片最低电压约束分别为 $0.5~\mathrm{A\,cm^{-2}}$、$20~\mathrm{C\,cm^{-2}}$ 和 $0.30~\mathrm{V}$。
 
 \subsubsection{优化结果与约束分析}
 \label{subsec:q2-step-results}
 
-同网格复算结果见\Cref{tab:q2-step-results}与\Cref{fig:q2-step-comparison}。
+搜索记录包含两条初始候选曲线和 $16$ 次新增模型评价；实际评价覆盖 $K=4,5,6$，各结构中最快的可行启动时间分别为 $36.6056$、$34.9724$ 和 $36.5873~\mathrm{s}$。有限预算内最短的可行启动时间出现在 $K=5$，即六个电流平台和五个切换时刻，共 $11$ 个连续参数。\Cref{tab:q2-step-results}给出该曲线的模型计算结果，\Cref{fig:q2-step-comparison}展示相应动态过程。
 
 \begin{table}[H]
   \centering
-  \caption{未优化四档与优化五档阶梯加载的仿真结果}
+  \caption{选定阶梯加载曲线的仿真结果}
   \label{tab:q2-step-results}
   \small
-  \begin{tabularx}{0.94\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.30\linewidth}>{\raggedright\arraybackslash}p{0.30\linewidth}}
+  \begin{tabularx}{0.85\linewidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.48\linewidth}}
     \toprule
-    指标 & 未优化四档 & 优化五档\\
+    指标 & 选定曲线\\
     \midrule
-    档位电流/$(\mathrm{A\,cm^{-2}})$ & 0.15, 0.18, 0.30, 0.40 & 0.1752, 0.2914, 0.2427, 0.2618, 0.4598\\
-    切换时刻/s & 5, 15, 35 & 2.5713, 12.1507, 20.5979, 27.5905\\
-    启动时间 $t_s/\mathrm{s}$ & 45.8918 & 36.0266（严格容差复核 36.0275）\\
-    全程最低单片电压 $V_{\min}/\mathrm{V}$ & 0.387167 & 0.314724（严格复核值）\\
-    启动时累积电荷 $q_{\mathrm{use}}/(\mathrm{C\,cm^{-2}})$ & 12.906723 & 11.002117（严格复核值）\\
-    启动时最大局部冰体积分数 & 0.198985 & 0.192016（严格复核值）\\
+    切换次数 $K$ & 5\\
+    档位电流/$(\mathrm{A\,cm^{-2}})$ & 0.1752, 0.2914, 0.2427, 0.2618, 0.5000, 0.4420\\
+    切换时刻/s & 2.5713, 12.1507, 20.5979, 27.0905, 31.0000\\
+    $-10~^{\circ}\mathrm{C}$ 启动时间/s & 34.972396\\
+    $-10~^{\circ}\mathrm{C}$ 最低单片电压/V & 0.314724\\
+    $-10~^{\circ}\mathrm{C}$ 累积电荷/$(\mathrm{C\,cm^{-2}})$ & 10.702447\\
+    $-10~^{\circ}\mathrm{C}$ 最大局部冰体积分数 & 0.296155\\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-优化使启动时间缩短 $9.8652~\mathrm{s}$，相对降幅 $21.50\%$。这一改善同时包含曲线结构（四档变为五档）与参数两方面的变化，不能全部归因于优化算法：同属五档曲线时，原先固定前缀的九变量方案为 $36.5010~\mathrm{s}$，全部九参数联合优化进一步缩短至 $36.0266~\mathrm{s}$，即算法带来的净改善为 $0.4744~\mathrm{s}$（$1.30\%$）。严格容差复核得到 $36.0275~\mathrm{s}$，与快网格结果仅相差 $0.0009~\mathrm{s}$，表明最优候选对时间积分容差不敏感。
+搜索允许阶梯数变化，本次最短可行方案对应 $K=5$。这只是有限评价预算下的结果，不表示预先把阶梯数固定为五次切换。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.98\linewidth]{figures/q2_step_loading_comparison.png}
-  \caption{未优化四档与优化五档阶梯加载的同网格对比：左上为电流阶梯曲线，右上为最冷单片平均温度（红虚线为 $0~^{\circ}\mathrm{C}$ 启动线），左下为全程最低单片电压（红虚线为 $0.30~\mathrm{V}$ 下限），右下为最大局部冰体积分数}
+  \includegraphics[width=14cm]{figures/q2_step_comparison_uniform.pdf}
+  \caption{选定阶梯加载曲线在 $-10~^{\circ}\mathrm{C}$ 下的电流、温度、电压与冰量}
   \label{fig:q2-step-comparison}
 \end{figure}
 
-优化五档的结构值得分析：首档 $0.1752~\mathrm{A\,cm^{-2}}$ 与四档基准的首档相当，避免低水合阶段的电压骤降；第二档显著提高到 $0.2914~\mathrm{A\,cm^{-2}}$，在膜开始升温后尽快加大产热；第三、四档回落到 $0.2427$ 与 $0.2618~\mathrm{A\,cm^{-2}}$，避让电压低点；末档 $0.4598~\mathrm{A\,cm^{-2}}$ 已接近 $0.5~\mathrm{A\,cm^{-2}}$ 上限，在电压裕度恢复后全力加热。四个切换时刻均落在搜索窗内部，未触碰窗口边界。严格复核的全程最低单片电压 $0.314724~\mathrm{V}$，距 $0.30~\mathrm{V}$ 下限仅 $0.0147~\mathrm{V}$；启动时累积电荷 $11.0021~\mathrm{C\,cm^{-2}}$，仅为上限的 $55.0\%$；启动时最大局部冰体积分数 $0.1920$，远未达到冰量阈值。末档电流未进一步增大，是因为继续提高末档电流会提前触及单片低电压边界而非电荷或冰量上限——电压约束再次成为限制启动速度的首要瓶颈，与恒流、线性升载两节的结论一致。
+如\Cref{fig:q2-step-comparison}所示，选定曲线依次调整电流平台，最冷单片在 $34.972396~\mathrm{s}$ 到达 $0~^{\circ}\mathrm{C}$。其全程最低单片电压为 $0.314724~\mathrm{V}$，最大局部冰体积分数为 $0.296155$，均满足所设约束。
 
-该结果为当前模型、参数与快速网格下搜索预算内的最佳实测值，不声称全局最优；启动时间尚未实现 $30~\mathrm{s}$ 以内，完整网格与实验数据的最终验证仍有待完成。
-
-\subsubsection{最低自启动初温}
+\subsubsection{低温可行性验证}
 \label{subsec:q2-step-mintemp}
 
-固定优化五档曲线，以二分方式搜索最低可自冷启动初温，每次试算同时将电堆初温与环境温度设为待测温度。快速网格容差下，已验证的最冷成功初温为 $-10.59375~^{\circ}\mathrm{C}$，相邻的 $-10.625~^{\circ}\mathrm{C}$ 失败，边界区间宽 $0.03125~^{\circ}\mathrm{C}$；用更严格容差复核后，最冷成功初温为 $-10.609375~^{\circ}\mathrm{C}$（启动时间 $37.5900~\mathrm{s}$），相邻失败点仍为 $-10.625~^{\circ}\mathrm{C}$，区间宽 $0.015625~^{\circ}\mathrm{C}$。因此宜报告优化阶梯曲线的最低自启动初温约为 $-10.61~^{\circ}\mathrm{C}$（严格容差下的数值搜索结果）。
+将\Cref{tab:q2-step-results}中的选定曲线固定、仅降低电堆和环境初温进行复算。该曲线在 $-10~^{\circ}\mathrm{C}$ 可启动，而在 $-10.0375~^{\circ}\mathrm{C}$ 已先触及 $0.30~\mathrm{V}$ 单片电压下限；$-10.075$、$-10.15$、$-10.3$、$-10.6$ 和 $-11.2~^{\circ}\mathrm{C}$ 的试算同样未能启动。若临界点附近的成功性随初温单调变化，其临界初温位于 $-10.0375$ 与 $-10~^{\circ}\mathrm{C}$ 之间。这表明以 $-10~^{\circ}\mathrm{C}$ 启动时间最短为目标所选的阶梯曲线，虽启动迅速，但对初温下降较敏感；最低初温的结论仅适用于这条固定曲线。
 
-严格容差下，成功工况 $-10.609375~^{\circ}\mathrm{C}$ 的全程最低单片电压为 $0.300289~\mathrm{V}$，仅比 $0.30~\mathrm{V}$ 下限高 $2.9\times10^{-4}~\mathrm{V}$，说明该曲线在临界初温附近的启动完全受电压下限支配。失败工况 $-10.625~^{\circ}\mathrm{C}$ 由第 $1$ 片在 $34.7749~\mathrm{s}$ 触发 $0.30~\mathrm{V}$ 电压事件，此时最冷单片（第 $1$ 片）平均温度约 $-0.883~^{\circ}\mathrm{C}$，全程最大局部冰体积分数 $0.3103$、累计电荷 $10.426~\mathrm{C\,cm^{-2}}$，均未达到各自上限——端部单片的低电压仍是直接失效路径，与恒流曲线下的初温搜索结论一致。
+\subsection{三种加载策略的结果汇总}
 
-需要说明，本节最低初温采用 $k_{\mathrm{freeze}}=0.4~\mathrm{s^{-1}}$ 的结果包口径，而恒流曲线的最低初温（约 $-11.07~^{\circ}\mathrm{C}$）来自 $k_{\mathrm{freeze}}=0.3~\mathrm{s^{-1}}$ 的结果包，两者不宜直接比较；加载策略对最低初温的影响应在统一口径下另行评估。该初温亦未在完整网格上验证，不排除重新优化曲线后获得更低初温的可能。
-% ===== 待补：三种加载策略的统一比较（恒流与阶梯曲线的最低初温已分别分析，但 kFreeze 口径不同，统一口径下的比较待补） =====
+\Cref{tab:q2-strategy-summary}汇总 $-10~^{\circ}\mathrm{C}$ 下三条选定曲线的五片电堆仿真结果。恒流曲线为前 $2~\mathrm{s}$ 升流后恒流；线性曲线采用式\eqref{eq:q2-linear-lowtemp-strategy}的低温检验方案，表中电流为启动前峰值；阶梯曲线为\Cref{tab:q2-step-results}中的变结构搜索选定方案。恒流采用 $k_{\mathrm{freeze}}=0.3~\mathrm{s^{-1}}$，其余两种采用 $0.4~\mathrm{s^{-1}}$，低温约束也不同，故仅汇总设计结果，不作严格优劣排序。
+
+\begin{table}[H]
+  \centering
+  \caption{三种选定加载曲线在 $-10~^{\circ}\mathrm{C}$ 下的仿真结果}
+  \label{tab:q2-strategy-summary}
+  \footnotesize
+  \setlength{\tabcolsep}{2.5pt}
+  \begin{tabular}{lcccccc}
+    \toprule
+    加载策略 & 启动时间/s & 累积电荷/$(\mathrm{C\,cm^{-2}})$ & 最大电流/$(\mathrm{A\,cm^{-2}})$ & 最低电压/V & 最大冰体积分数 & 结果\\
+    \midrule
+    短时升流后恒流 & 64.938125 & 17.091480 & 0.267000 & 0.323935 & 0.366777 & 成功\\
+    线性升载 & 41.991669 & 12.081952 & 0.430464 & 0.397340 & 0.339889 & 成功\\
+    可变结构阶梯加载 & 34.972396 & 10.702447 & 0.500000 & 0.314724 & 0.296155 & 成功\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{问题三模型的建立与求解}
 \label{sec:model3}
 
-\subsection{模型建立}
-在电堆能量守恒方程中引入各片独立的辅助加热源项，建立 $-30~^{\circ}\mathrm{C}$ 下的电堆辅助冷启动模型，并分别给出纯预加热启动与恒定功率协同启动两种方式下以辅助加热总能耗为目标的优化问题。
+\subsection{辅助加热模型与优化目标}
 
-\subsection{模型求解与结果}
-求解两种方式下的最优加热功率分配与加热持续时间，给出总启动时间、各片能耗分配与总能耗，并比较二者在能耗、启动速度与端部单电池冰堵抑制效果上的差异。
+在五片单电池水--热--电耦合模型中，为每片双极板设置独立电热丝。设第 $k$ 片的恒定加热功率密度为 $q_k$，五片共用计划停热时刻 $t_h$，决策向量为 $\bm x=(q_1,\ldots,q_5,t_h)$，其中 $0\le q_k\le1~\mathrm{W\,cm^{-2}}$。单片面积 $A=25~\mathrm{cm^2}$，故实际输入功率为
+\begin{equation}
+  P_{h,k}(t)=Aq_k\,\bm 1_{[0,t_h)}(t).
+  \label{eq:q3-heater}
+\end{equation}
+原模型未单设电热丝和双极板的空间温度节点；计算时将该功率守恒地折算为单片一维温度场中的均匀热源，即 $S_{h,k}=10^4q_k/L_{\mathrm{1D}}$（加热开启时），其中 $L_{\mathrm{1D}}$ 为一维计算域厚度。热传导、相变及电化学产热仍按前文耦合方程求解，端板温度作为独立状态计算。这个折算保留每片输入的总热量，但不解析电热丝附近的局部温差。电堆的热耦合结构见\Cref{fig:q3-thermal-schematic}。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=14cm]{figures/q3_thermal_network.png}
+  \caption{五片电堆辅助加热与热耦合示意（协同加热约 $30~\mathrm{s}$，双极板色彩按相邻求解节点插值）}
+  \label{fig:q3-thermal-schematic}
+\end{figure}
+
+纯预加热阶段取 $j(t)=0$，五片平均温度均越过 $0~^{\circ}\mathrm{C}$ 即记为本问的预热启动完成，表中时间不再额外叠加后续带载时间。恒定功率协同启动从 $t=0$ 同时通电和加热，按照题定曲线
+\begin{equation}
+  j(t)=\min\{0.005t,\,0.3\}\quad(\mathrm{A\,cm^{-2}})
+  \label{eq:q3-current}
+\end{equation}
+升载；恒定的是电热丝功率，而非电堆输出功率。两种工况的电堆各部件及环境初温均为 $-30~^{\circ}\mathrm{C}$。
+
+若 $t_s$ 为首次满足五片同时启动条件的时刻，实际计入能耗的加热时间为 $t_{h,\mathrm{used}}=\min(t_h,t_s)$。由此，单片及电堆辅助电能分别为
+\begin{equation}
+  E_k=Aq_k t_{h,\mathrm{used}},\qquad
+  \min_{\bm x}\ E_{\mathrm{aux}}(\bm x)
+  =\min_{\bm x}\sum_{k=1}^{5}E_k.
+  \label{eq:q3-objective}
+\end{equation}
+最小化目标仅为电热丝消耗的电能，不含氢耗及其他辅机能耗。可行性沿用问题二的五片平均温度过零、单片电压不低于 $0.30~\mathrm{V}$、最大局部冰体积分数低于 $0.99$、单位面积累计电荷不超过 $20~\mathrm{C\,cm^{-2}}$ 等条件。协同策略在计划停热后仍继续求解，直至启动成功或触发约束；因此一般不能将 $t_h$ 直接当作 $t_s$。
+
+\subsection{参数搜索与数值设置}
+
+针对纯预热，先比较保存的功率分配候选，再在可行边界附近缩小功率与过零时刻步长，去除启动成功后的冗余加热时间。针对协同启动，在五片功率与共同停热时刻组成的六维空间内进行差分进化搜索，并补充端片、中间片减功率及提前停热等定向检验。每个候选均调用五片瞬态模型，以真实启动判定和辅助能耗更新可行方案记录；有限次数搜索并不构成全局最优性证明。
+
+两类加热方案的候选生成方式不同，但共用瞬态仿真、约束判定与能耗评价步骤，整体求解流程见\Cref{fig:q3-algorithm-flow}。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=14cm]{figures/q3_algorithm_flow.pdf}
+  \caption{问题三两种辅助加热策略的参数搜索与仿真评价流程}
+  \label{fig:q3-algorithm-flow}
+\end{figure}
+
+仿真沿用 $[2,3,4,4,2]$ 的五层控制体网格。对选定方案采用更严格的时间积分设置（相对容差 $10^{-6}$、绝对容差 $10^{-10}$、最大时间步 $0.0125~\mathrm{s}$）复核。这一复核改进时间积分精度，但不等同于空间网格收敛检验。
+
+\subsection{优化结果与机理分析}
+
+\Cref{tab:q3-results}给出两种策略在当前模型及已执行搜索中的最低辅助能耗可行记录。两种记录都在达到启动条件前保持加热，因此实际加热时间与总启动时间相同。协同分配的第五片功率密度约为 $0.9956~\mathrm{W\,cm^{-2}}$；表中舍入仅供展示，复算采用保存的完整数值。
+
+\begin{table}[H]
+  \centering
+  \caption{两种辅助冷启动策略的模型计算结果}
+  \label{tab:q3-results}
+  \begin{tabular}{lcc}
+    \toprule
+    指标 & 纯预加热 & 恒定功率协同\\
+    \midrule
+    功率密度分配 $\bm q/(\mathrm{W\,cm^{-2}})$ & $(1,1,1,1,1)$ & $(1,1,1,1,0.9956)$\\
+    加热持续时间 $t_{h,\mathrm{used}}/\mathrm{s}$ & 33.5163 & 30.2539\\
+    第1片辅助电能 $E_1/\mathrm{J}$ & 837.907 & 756.348\\
+    第2片辅助电能 $E_2/\mathrm{J}$ & 837.907 & 756.348\\
+    第3片辅助电能 $E_3/\mathrm{J}$ & 837.907 & 756.348\\
+    第4片辅助电能 $E_4/\mathrm{J}$ & 837.907 & 756.348\\
+    第5片辅助电能 $E_5/\mathrm{J}$ & 837.907 & 753.011\\
+    总辅助电能 $E_{\mathrm{aux}}/\mathrm{J}$ & 4189.537 & 3778.402\\
+    总启动时间 $t_s/\mathrm{s}$ & 33.5163 & 30.2539\\
+    全程输出最大局部冰体积分数 & 0.011603 & 0.119673\\
+    启动结果 & 成功 & 成功\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+协同方案相对纯预热少用辅助电能 $411.135~\mathrm{J}$，降幅 $9.81\%$；启动提前 $3.2624~\mathrm{s}$，缩短 $9.73\%$。\Cref{fig:q3-timecourse}中的最冷单片温度曲线表明两端片决定最终过零时刻。协同加热在获得额外反应热的同时产生水，故端片最大局部冰体积分数达到 $0.119673$，高于纯预热的 $0.011603$。因此本组计算并非协同策略在能耗、速度和冰堵抑制三方面均占优。纯预热虽无反应电流，模型中的初始水合与水迁移仍可带来少量结冰；协同方案的全程最低单片电压为 $0.6308~\mathrm{V}$，未触及 $0.30~\mathrm{V}$ 下限。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=14cm]{figures/q3_strategy_timecourse.pdf}
+  \caption{辅助冷启动过程的温度、能耗、端片冰量及电压}
+  \label{fig:q3-timecourse}
+\end{figure}
+
+\Cref{fig:q3-temperature}进一步显示，启动时中间片明显暖于端片，而两侧端板仍低于冰点。以协同方案为例，第3片平均温度约 $19.24~^{\circ}\mathrm{C}$，第1、5片仅约 $0.01~^{\circ}\mathrm{C}$，两侧端板约为 $-18.86~^{\circ}\mathrm{C}$。端板吸热及片间导热使两端片成为加热瓶颈，也解释了已发现的低能耗解仍接近五片满功率。图中横轴为端板和单片节点顺序，并非连续空间距离。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=14cm]{figures/q3_terminal_temperature.pdf}
+  \caption{两种策略各自启动完成时的端板与五片单电池平均温度}
+  \label{fig:q3-temperature}
+\end{figure}
+
+\subsection{结果适用范围}
+
+以上数值属于资料包原版模型的有限搜索结果，而非实验实测或已证明的全局最优。当前协同方案相对同精度五片全满功率协同基准仅节约约 $2.059~\mathrm{J}$，这一微小差别尚未接受空间网格误差检验，故不将第五片 $0.9956$ 的细小偏差解释为确定的物理最优分配。还须注意，本节保存代码采用 $E_a=8000~\mathrm{J\,mol^{-1}}$，与问题一正文的 $67000~\mathrm{J\,mol^{-1}}$ 参数口径不一致，并在可行性判定中加入了题目冰量阈值以外的孔隙占用限制 $0.98$。因此表中数值应理解为该原版实现下的条件性结果；若与前文统一参数及约束，需重新进行优化和复算，不能直接沿用此表。
 
 \section{问题四模型的建立与求解}
 \label{sec:model4}
@@ -1302,25 +1396,5 @@ LogEI 与普通期望改进具有相同或近似相同的最优点，但能避�
   \label{eq:heatbc}
 \end{equation}
 各功能层交界面上的气体通量、水通量与热流连续，CL|PEM 界面按式（\ref{eq:interface}）交换水分。
-
-\subsection{程序示例}
-下列 Python 代码仅用于演示代码排版与目标函数计算，不是完整求解器。实际提交时应替换为能够复现论文结果的程序。
-
-% 较长程序可使用 \lstinputlisting[language=Python]{程序文件路径}。
-\begin{lstlisting}[language=Python]
-def objective(x, targets, weights):
-    if not (len(x) == len(targets) == len(weights)):
-        raise ValueError("Input lengths must match.")
-    if any(weight <= 0 for weight in weights):
-        raise ValueError("Weights must be positive.")
-    return sum(
-        weight * (value - target) ** 2
-        for value, target, weight in zip(x, targets, weights)
-    )
-
-
-value = objective([1.0, 2.0], [1.5, 2.5], [1.0, 2.0])
-print(value)
-\end{lstlisting}
 
 \end{document}
