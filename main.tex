@@ -277,6 +277,14 @@
 \end{equation}
 其中温度与总水定义在全部 $63$ 个网格单元上；氢气定义在 aGDL 与 aCL 共 $19$ 个网格单元上；氧气定义在 cCL 与 cGDL 共 $25$ 个网格单元上；冰仅定义在 aGDL、aCL、cCL 与 cGDL 共 $44$ 个多孔介质网格单元上（质子交换膜内的水以吸附态结合水描述，不再设置孔隙冰）；$\lambda_{\mathrm{cCL}}$ 为阴极催化层离聚物的平均含水量，作为一个集总状态单独求解。
 
+问题一单电池的分层结构与各物理过程之间的耦合关系如\Cref{fig:p1_coupling} 所示。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth,height=0.78\textheight,keepaspectratio,trim=40bp 245bp 40bp 40bp,clip]{figures/problem1_model.pdf}
+  \caption{问题一单电池一维多物理场耦合示意图}
+  \label{fig:p1_coupling}
+\end{figure}
+
 \subsection{控制方程}
 
 \subsubsection{气体守恒方程}
@@ -608,7 +616,7 @@
 
 冰覆盖指数 $\gamma_{\mathrm{ice}}=3.5$ 与冻结速率系数 $k_{\mathrm{frz}}=0.4~\mathrm{s^{-1}}$ 在本次计算中固定，未由附件2的电压数据重新辨识。由于缺少冰量实测，模型预测的冰状态仍需后续实验检验。
 
-\newpage
+膜与阴极催化层的水合变化及冰覆盖对有效反应面积的影响见\Cref{fig:p1_hydration}。
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.86\linewidth]{figures/p1_f_hydration.pdf}
@@ -805,13 +813,6 @@ LogEI 与普通期望改进具有相同或近似相同的最优点，但能避�
 
 优化方案使启动时间缩短 $8.1123$ s，相对降幅为 $16.61\%$；累积电荷减少 $0.8239$ C/cm$^2$，下降 $6.69\%$。启动提前并非通过无条件提高平台电流实现。优化器把初始电流从 $0.0200$ A/cm$^2$ 提高到 $0.1176$ A/cm$^2$，使冷启动早期更快地产生反应热；随后采用略低的升载斜率，使电流增长与膜水合、温升和融冰过程相匹配，从而在电压不越界的前提下持续增加产热。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.98\linewidth]{figures/q2_linear_comparison.png}
-  \caption{未优化与优化线性加载方案在同一快速网格下的模型仿真对比}
-  \label{fig:q2-linear-comparison}
-\end{figure}
-
 \Cref{fig:q2-linear-comparison}左上图显示，未优化方案在 $38.0~\mathrm{s}$ 达到 $0.4000~\mathrm{A\,cm^{-2}}$ 的平台，之后继续恒流加热约 $10.84~\mathrm{s}$ 才启动。优化方案的理论平台到达时间为
 \begin{equation}
   t_p=\frac{j_p-j_0}{r}=40.7848~\mathrm{s},
@@ -823,6 +824,13 @@ LogEI 与普通期望改进具有相同或近似相同的最优点，但能避�
 电压约束是继续缩短启动时间的主要瓶颈。优化方案的全程最低单片电压为 $0.311870$ V，出现在约 $36$ s 的第4片，距离 $0.30$ V 下限仅 $0.011870$ V。此后尽管电流仍在上升，温升、膜水合改善及局部融冰使电压重新回升。相比之下，电流上限尚有约 $0.0533$ A/cm$^2$ 的余量，累积电荷只使用上限的 $57.46\%$，冰体积分数和孔隙占用也远未达到失败阈值。因此，在当前模型参数下，简单提高初始电流或升载速率首先会触及单片低电压边界，而不是电荷或冰量上限。
 
 冰量曲线显示，优化方案的最大局部冰体积分数在约 $39~\mathrm{s}$ 达到 $0.3316$，随后随局部温度接近冰点而快速下降，启动时降至 $0.1975$。全程最大冰量出现在第1片，与其端部散热较强、温升最慢相一致；最低电压却出现在第4片，说明热约束、冰约束和电压约束不一定由同一片电池控制。加载策略必须对五片电池的完整历史同时检查，不能只依据平均堆温或总电压判断启动是否安全。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/q2_linear_comparison.png}
+  \caption{未优化与优化线性加载方案在同一快速网格下的模型仿真对比}
+  \label{fig:q2-linear-comparison}
+\end{figure}
 
 将求解器相对容差和绝对容差在对比设置基础上再收紧一倍，优化方案仍成功启动，得到 $40.7242~\mathrm{s}$，与表中结果仅相差约 $0.0023~\mathrm{s}$。这说明该候选点对当前快速网格上的时间积分容差不敏感，但尚不能替代空间完整网格验证。
 
