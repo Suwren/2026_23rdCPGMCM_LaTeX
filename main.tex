@@ -706,7 +706,7 @@
 \subsubsection{求解方法}
 \label{subsec:q2-cc-method}
 
-恒流与线性升载两种策略共用同一套可行性驱动信赖域贝叶斯优化框架，其通用流程与算法细节见\Cref{subsec:q2-linear-method}与算法~\ref{alg:q2-search}，此处只给出恒流一维情形的具体配置。
+恒流与线性升载两种策略共用同一套可行性驱动信赖域贝叶斯优化框架，其通用流程与算法细节见小节~\ref{subsec:q2-linear-method}与算法~\ref{alg:q2-search}，此处只给出恒流一维情形的具体配置。
 
 设 $V_{\lim}=0.30~\mathrm{V}$、$q_{\lim}=20~\mathrm{C\,cm^{-2}}$、$\varepsilon_{\mathrm{ice,lim}}=0.99$、$j_{\lim}=0.5~\mathrm{A\,cm^{-2}}$ 为各约束阈值，$t_{\mathrm{end}}$ 为终止时刻，定义全程最大电流密度 $j^{\max}=\max_t j(t)$、全程最大局部冰体积分数 $\varepsilon_{\mathrm{ice}}^{\max}$ 与全程最大孔隙占用 $s_{\mathrm{pore}}^{\max}=\max_{k,x}(\varepsilon_{l,k}+\varepsilon_{i,k})$。约束违例指标取各归一化裕度的最大值
 \begin{equation}
